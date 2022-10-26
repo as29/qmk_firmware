@@ -13,6 +13,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+ /* 
+  * @as29 keymap 10/2022
+  */
 
 #include QMK_KEYBOARD_H
 #include "muse.h"
@@ -105,7 +109,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * | ESC  |      |      |      |      |      |      |   *  |   /  |  -   |      | PrScr|
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Tab  |      |      |   =  |      |   ~  |   7  |  8   |   9  |  +   |   {  |   }  |
+ * | Tab  |      |      |   =  |      |   ~  |   7  |  8   |   9  |  +   |  [{  |  }]  |
  * |------+------+------+------+------+-------------+------+------+------+------|------|
  * | CAPS |      |      |   _  |   -  |   `  |   4  |  5   |   6  |   ,  |   (  |   )  |
  * |------+------+------+------+------+------|------+------+------+------+------|------|
@@ -117,7 +121,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LOWER] = LAYOUT_ortho_5x12(
 
   _______,	KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_PSLS,	KC_PAST,	KC_PMNS,	KC_NO,		KC_PSCR,
-  _______,	KC_NO,		KC_NO,		KC_EQL,		KC_NO,		KC_TILD,	KC_P7,		KC_P8,		KC_P9,		KC_PPLS,	KC_LCBR,	KC_RCBR,
+  _______,	KC_NO,		KC_NO,		KC_EQL,		KC_NO,		KC_TILD,	KC_P7,		KC_P8,		KC_P9,		KC_PPLS,	KC_LBRC,	KC_RBRC,
   _______,	KC_NO,		KC_NO,		KC_UNDS,	KC_PMNS,	KC_GRV,		KC_P4,		KC_P5,		KC_P6,		KC_PCMM,	KC_LPRN,	KC_RPRN,
   _______,	KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_P0,		KC_P1,		KC_P2,		KC_P3,		KC_PEQL,	KC_BSLS,	_______,
   _______,	_______,	_______,	_______,	_______,	_______,	_______,	_______,	KC_PDOT,	_______,	_______,	_______
@@ -165,14 +169,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______,	_______,	MU_MOD,		AU_ON,		AU_OFF,		AG_NORM,	AG_SWAP,	ARROWS,		QWERTY,		NUMPAD,		_______,	_______,
   _______,	MUV_DE,		MUV_IN,		MU_ON, 		MU_OFF,		MI_ON,		MI_OFF,		_______,	_______,	_______,	_______,	_______,
   _______,	_______,	_______,	_______,	_______,	_______,	_______,	_______,	KC_NO,		KC_NO,		KC_NO,		KC_NO
-  
-  
-/*   RGB_TOG,	RGB_M_P,	RGB_M_B,	RGB_M_R,	RGB_M_SW,	RGB_M_SN,	RGB_M_K,	RGB_M_X,	RGB_M_G,	RGB_M_T,	KC_NO,		KC_NO,
-  _______,	QK_BOOT,	DEBUG,		RGB_HUI,	RGB_HUD,	RGB_SAI,	RGB_SAD,	RGB_VAI,	RGB_VAD,	_______,	_______,	KC_NO,
-  _______,	_______,	MU_MOD,		AU_ON,		AU_OFF,		AG_NORM,	AG_SWAP,	ARROWS,		QWERTY,		NUMPAD,		_______,	_______,
-  _______,	MUV_DE,		MUV_IN,		MU_ON, 		MU_OFF,		MI_ON,		MI_OFF,		_______,	_______,	_______,	_______,	_______,
-  _______,	_______,	_______,	_______,	_______,	_______,	_______,	_______,	RGB_RMOD,	RGB_SPD,	RGB_SPI,	RGB_MOD */
-
 ),
 
 /* MODRGB - RGB Controls
@@ -199,6 +195,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 
+/*
+ * Defining sounds for layers and caps
+ */
+#ifdef AUDIO_ENABLE
+	float lower_song[][2] = SONG(UNICODE_LINUX);
+	float raise_song[][2] = SONG(UNICODE_WINDOWS);
+	float caps_on_song[][2] = SONG(CAPS_LOCK_ON_SOUND);
+	float caps_off_song[][2] = SONG(CAPS_LOCK_OFF_SOUND);
+#endif
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
         case QWERTY:
@@ -221,6 +227,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           break;
         case LOWER:
           if (record->event.pressed) {
+			#ifdef AUDIO_ENABLE
+			  PLAY_SONG(lower_song);	//Play lower layer song
+			#endif
             layer_on(_LOWER);
             update_tri_layer(_LOWER, _RAISE, _ADJUST);
           } else {
@@ -231,7 +240,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           break;
         case RAISE:
           if (record->event.pressed) {
-            layer_on(_RAISE);
+			#ifdef AUDIO_ENABLE
+			  PLAY_SONG(raise_song);	//Play raise layer song
+            #endif
+			layer_on(_RAISE);
             update_tri_layer(_LOWER, _RAISE, _ADJUST);
           } else {
             layer_off(_RAISE);
@@ -247,6 +259,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             layer_off(_MODRGB);
             update_tri_layer(_LOWER, _RAISE, _ADJUST);
           }
+          return false;
+          break;
+		case KC_CAPS:					//Play sound for CAPS
+          if (record->event.pressed) {
+			if (host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK)){
+			  #ifdef AUDIO_ENABLE
+				PLAY_SONG(caps_off_song);
+			  #endif
+			  register_code(KC_CAPS);
+			} else {
+			  #ifdef AUDIO_ENABLE
+				PLAY_SONG(caps_on_song);
+			  #endif
+			  register_code(KC_CAPS);
+            }
+		  }
           return false;
           break;
         /* case BACKLIT:
