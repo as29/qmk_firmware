@@ -109,28 +109,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Lower
  * ,-----------------------------------------------------------------------------------.
- * | ESC  |      |      |      |      |      |      |   *  |   /  |  -   |      | PrScr|
+ * |  Del |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |  F7  |  F8  |  F9  | F10  |  F11 |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Tab  |      |      |   =  |      |   ~  |   7  |  8   |   9  |  +   |  [{  |  }]  |
+ * | Space|  {   |  }   |  =   |  [   |  ~   |   ]  |   7  |  8   |   9  |  +   |  F12 |
  * |------+------+------+------+------+-------------+------+------+------+------|------|
- * | CAPS |      |      |   _  |   -  |   `  |   4  |  5   |   6  |   ,  |   (  |   )  |
+ * | Enter|SelAll| Save |  _   |  -   |  `   |   ^  |   4  |  5   |   6  |   (  |  )   |
  * |------+------+------+------+------+------|------+------+------+------+------|------|
- * | Shift|      |      |      |      |   0  |   1  |  2   |   3  |   =  |   \  |Enter |
+ * | Shift| Undo |  Cut | Copy | Paste| Bold | New  |   1  |  2   |   3  |   \  |Ent/RS|
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Ctrl | RGB  | GUI  | Alt  |Lower | Bksp |Space |Raise | Home | PgUp | PgDn | End  |
+ * | Ctrl | RGB  | GUI  | Alt  |Lower | Bksp |Space |Raise |  0   |   .  | PgDn | End  |
  * `-----------------------------------------------------------------------------------'
  */
 [_LOWER] = LAYOUT_ortho_5x12(
-	_______,	KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_PSLS,	KC_PAST,	KC_PMNS,	KC_NO,		KC_PSCR,
-	_______,	KC_NO,		KC_NO,		KC_EQL,		KC_NO,		KC_TILD,	KC_P7,		KC_P8,		KC_P9,		KC_PPLS,	KC_LBRC,	KC_RBRC,
-	_______,	KC_NO,		KC_NO,		KC_UNDS,	KC_PMNS,	KC_GRV,		KC_P4,		KC_P5,		KC_P6,		KC_PCMM,	KC_LPRN,	KC_RPRN,
-	_______,	KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_P0,		KC_P1,		KC_P2,		KC_P3,		KC_PEQL,	KC_BSLS,	_______,
-	_______,	_______,	_______,	_______,	_______,	_______,	_______,	_______,	KC_PDOT,	_______,	_______,	_______
+	KC_DEL,		KC_F1,		KC_F2,		KC_F3,		KC_F4,		KC_F5,		KC_F6,		KC_F7,		KC_F8,		KC_F9,		KC_F10,		KC_F11,
+	KC_SPC,		KC_LCBR,	KC_RCBR,	KC_EQL,		KC_LBRC,	KC_TILD,	KC_RBRC,	KC_7,		KC_8,		KC_9,		KC_PLUS,	KC_F12,
+	KC_ENT,		LCTL(KC_A),	LCTL(KC_S),	KC_UNDS,	KC_PMNS,	KC_GRV,		KC_CIRC,	KC_4,		KC_5,		KC_6,		KC_LPRN,	KC_RPRN,
+	_______,	LCTL(KC_Z),	LCTL(KC_X),	LCTL(KC_C),	LCTL(KC_V),	LCTL(KC_B), LCTL(KC_N),	KC_1,		KC_2,		KC_3,		KC_BSLS,	_______,
+	_______,	_______,	_______,	_______,	_______,	_______,	_______,	_______,	KC_0,		KC_PDOT,	_______,	_______
 ),
 
 /* Raise
  * ,-----------------------------------------------------------------------------------.
- * |  F12 |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |  F7  |  F8  |  F9  |  F10 |  F11 |
+ * | ESC  |      |      |      |      |      |      |      |      |      |      |  DEL |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * | Tab  |      | Btn1 | Ms U | Btn2 | Scr U| Acc0 |PrvWd |  UP  | NxtWd|      |      |
  * |------+------+------+------+------+-------------+------+------+------+------+------|
@@ -142,7 +142,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_ortho_5x12(
-	KC_F12,		KC_F1,		KC_F2,		KC_F3,		KC_F4,		KC_F5,		KC_F6,		KC_F7,		KC_F8,		KC_F9,		KC_F10,		KC_F11,
+	_______,	KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		_______,
 	_______,	KC_NO,		KC_BTN1,	KC_MS_U,	KC_BTN2,	KC_WH_U,	KC_ACL0,	PRVWD,		KC_UP,		NXTWD,		KC_NO,		KC_NO,
 	_______,	KC_NO,		KC_MS_L,	KC_MS_D,	KC_MS_R,	KC_WH_D,	KC_ACL1,	KC_LEFT,	KC_DOWN,	KC_RGHT,	KC_NO,		KC_NO,
 	_______,	KC_UNDO,	KC_CUT,		KC_COPY,	KC_PSTE,	KC_NO,		KC_ACL2,	KC_MUTE,	KC_MRWD,	KC_MFFD,	KC_MPLY,	_______,
