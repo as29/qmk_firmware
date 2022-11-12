@@ -38,8 +38,10 @@ enum preonic_keycodes {
 	LOWER,
 	RAISE,
 	MODRGB,
-	PRVWD,
-	NXTWD
+	PRVWD,		//navigate to start of word
+	NXTWD,      //navigate to end of word
+	BWORD,      //backspace to start of word
+	DWORD       //delete to end of word
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -73,7 +75,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * | CAPS |      | Ms L | Ms D | Ms R | Src D| Acc1 | Left | Down | Right|      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift| Undo | Cut  | Copy | Paste|      | Acc2 |      |      |      |      |Enter |
+ * | Shift| Undo | Cut  | Copy | Paste|      | Acc2 | Bword|      | Dword|      |Enter |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * | Ctrl | RGB  | GUI  | Alt  |Lower | Bksp |Space |Raise | Home | PgUp | PgDn | End  |
  * `-----------------------------------------------------------------------------------'
@@ -82,7 +84,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	KC_ESC,		KC_EXLM,	KC_AT,		KC_HASH,	KC_DLR,		KC_PERC,	KC_CIRC,	KC_AMPR,	KC_ASTR,	KC_LPRN,	KC_RPRN,	KC_DEL,
 	KC_TAB,		KC_NO,		KC_BTN1,	KC_MS_U,	KC_BTN2,	KC_WH_U,	KC_ACL0,	PRVWD,		KC_UP,		NXTWD,		KC_NO,		KC_NO,
 	KC_CAPS,	KC_NO,		KC_MS_L,	KC_MS_D,	KC_MS_R,	KC_WH_D,	KC_ACL1,	KC_LEFT,	KC_DOWN,	KC_RGHT,	KC_NO,		KC_NO,
-	KC_LSFT,	KC_UNDO,	KC_CUT,		KC_COPY,	KC_PSTE,	KC_NO,		KC_ACL2,	KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_SFTENT,
+	KC_LSFT,	KC_UNDO,	KC_CUT,		KC_COPY,	KC_PSTE,	KC_NO,		KC_ACL2,	BWORD,		KC_NO,		DWORD,		KC_NO,		KC_SFTENT,
 	KC_LCTL,	MODRGB,		KC_LGUI,	KC_LALT,	LOWER,		KC_BSPC,	KC_SPC, 	RAISE,		KC_HOME,	KC_PGUP,	KC_PGDN,	RCTL_T(KC_END)
 ),
 
@@ -132,20 +134,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-----------------------------------------------------------------------------------.
  * | ESC  |      |      |      |      |      |      |      |      |      |      |  DEL |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Tab  |      | Btn1 | Ms U | Btn2 | Scr U| Acc0 |PrvWd |  UP  | NxtWd|      |      |
+ * | Tab  |      | Btn1 | Ms U | Btn2 | Scr U| Acc0 |PrvWd |  UP  | NxtWd| Trk -| Trk +|
  * |------+------+------+------+------+-------------+------+------+------+------+------|
  * | CAPS |      | Ms L | Ms D | Ms R | Src D| Acc1 | Left | Down | Right|      |      |
  * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift| Undo | Cut  | Copy | Paste|      | Acc2 | Mute |  Trk-| Trk+ | Play |      |
+ * | Shift| Undo | Cut  | Copy | Paste|      | Acc2 | BWord|      | DWord| Play | Mute |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * | Ctrl | RGB  | GUI  | Alt  |Lower | Bksp |Space |Raise | Prev | Vol+ | Vol- | Next |
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_ortho_5x12(
-	_______,	KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		_______,
-	_______,	KC_NO,		KC_BTN1,	KC_MS_U,	KC_BTN2,	KC_WH_U,	KC_ACL0,	PRVWD,		KC_UP,		NXTWD,		KC_NO,		KC_NO,
+	_______,	KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_DEL,
+	_______,	KC_NO,		KC_BTN1,	KC_MS_U,	KC_BTN2,	KC_WH_U,	KC_ACL0,	PRVWD,		KC_UP,		NXTWD,		KC_MRWD,	KC_MFFD,
 	_______,	KC_NO,		KC_MS_L,	KC_MS_D,	KC_MS_R,	KC_WH_D,	KC_ACL1,	KC_LEFT,	KC_DOWN,	KC_RGHT,	KC_NO,		KC_NO,
-	_______,	KC_UNDO,	KC_CUT,		KC_COPY,	KC_PSTE,	KC_NO,		KC_ACL2,	KC_MUTE,	KC_MRWD,	KC_MFFD,	KC_MPLY,	_______,
+	_______,	KC_UNDO,	KC_CUT,		KC_COPY,	KC_PSTE,	KC_NO,		KC_ACL2,	BWORD,		KC_NO,		DWORD,		KC_MPLY,	KC_MUTE,
 	_______,	_______,	_______,	_______,	_______,	_______,	_______,	_______,	KC_MPRV,	KC_VOLU,	KC_VOLD,	KC_MNXT
 ),
 
@@ -254,10 +256,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 		case MODRGB:
 			if (record->event.pressed) {
 				layer_on(_MODRGB);
-				update_tri_layer(_LOWER, _RAISE, _ADJUST);
+				//update_tri_layer(_LOWER, _RAISE, _ADJUST);
 			} else {
 				layer_off(_MODRGB);
-				update_tri_layer(_LOWER, _RAISE, _ADJUST);
+				//update_tri_layer(_LOWER, _RAISE, _ADJUST);
 			}
 			return false;
 			break;
@@ -357,26 +359,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 			break;
-        /* case BACKLIT:
-          if (record->event.pressed) {
-            register_code(KC_RSFT);
-            #ifdef BACKLIGHT_ENABLE
-              backlight_step();				REMOVING SINCE USING RGB 
-            #endif
-            #ifdef RGBLIGHT_ENABLE
-              rgblight_step();
-            #endif
-            #ifdef __AVR__
-            writePinLow(E6);
-            #endif
-          } else {
-            unregister_code(KC_RSFT);
-            #ifdef __AVR__
-            writePinHigh(E6);
-            #endif
-          }
-          return false;
-          break; */
+        case BWORD:
+            if (record->event.pressed) {
+                register_mods(mod_config(MOD_LCTL));
+                register_code(KC_BSPC);
+            } else {
+                unregister_mods(mod_config(MOD_LCTL));
+                unregister_code(KC_BSPC);
+            }
+			return false;
+			break;
+		case DWORD:
+            if (record->event.pressed) {
+                register_mods(mod_config(MOD_LCTL));
+                register_code(KC_DEL);
+            } else {
+                unregister_mods(mod_config(MOD_LCTL));
+                unregister_code(KC_DEL);
+            }
+			return false;
+			break;
       }
     return true;
 };

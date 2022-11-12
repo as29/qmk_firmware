@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #ifdef OLED_ENABLE
 /* 32 * 20 logo 'Initials', 32x20px */
 static void render_logo(void) {
@@ -70,7 +70,7 @@ static const char PROGMEM mac_logo[] = {
 /* KEYBOARD PET START */
 
 /* settings */
-#    define MIN_WALK_SPEED      30
+#    define MIN_WALK_SPEED      10
 #    define MIN_RUN_SPEED       70
 
 /* advanced settings */
@@ -94,7 +94,7 @@ bool isJumping  = false;
 bool showedJump = true;
 
 /* logic */
-static void render_rose(int ROSE_X, int ROSE_Y) {
+static void render_eloise(int ELOISE_X, int ELOISE_Y) {
 	
     /* Sit */
     static const char PROGMEM sit[2][ANIM_SIZE] = {/* 'sit1', 32x22px */
@@ -207,22 +207,22 @@ static void render_rose(int ROSE_X, int ROSE_Y) {
 													};
 
     /* animation */
-    void animate_rose(void) {
+    void animate_eloise(void) {
         /* jump */
         if (isJumping || !showedJump) {
             /* clear */
-            oled_set_cursor(ROSE_X, ROSE_Y + 2);
+            oled_set_cursor(ELOISE_X, ELOISE_Y + 2);
             oled_write("     ", false);
 
-            oled_set_cursor(ROSE_X, ROSE_Y - 1);
+            oled_set_cursor(ELOISE_X, ELOISE_Y - 1);
 
             showedJump = true;
         } else {
             /* clear */
-            oled_set_cursor(ROSE_X, ROSE_Y - 1);
+            oled_set_cursor(ELOISE_X, ELOISE_Y - 1);
             oled_write("     ", false);
 
-            oled_set_cursor(ROSE_X, ROSE_Y);
+            oled_set_cursor(ELOISE_X, ELOISEF_Y);
         }
 
         /* switch frame */
@@ -245,20 +245,24 @@ static void render_rose(int ROSE_X, int ROSE_Y) {
             oled_write_raw_P(run[abs(1 - current_frame)], ANIM_SIZE);
         }
     }
-
-    /* animation timer */
-    if (timer_elapsed32(anim_timer) > ANIM_FRAME_DURATION) {
-        anim_timer = timer_read32();
-        animate_rose();
-    }
 	
 	/* this fixes the screen on and off bug */
-    if (current_wpm > 0) {
-        oled_on();
+	if(get_current_wpm() != 000) {
+        oled_on(); // not essential but turns on animation OLED with any alpha keypress
+        if(timer_elapsed32(anim_timer) > ANIM_FRAME_DURATION) {
+            anim_timer = timer_read32();
+            animate_eloise();
+        }
         anim_sleep = timer_read32();
-    } else if (timer_elapsed32(anim_sleep) > OLED_TIMEOUT) {
-        oled_off();
-		max_wpm = 0;
+    } else {
+        if(timer_elapsed32(anim_sleep) > OLED_TIMEOUT) {
+            oled_off();
+        } else {
+            if(timer_elapsed32(anim_timer) > ANIM_FRAME_DURATION) {
+                anim_timer = timer_read32();
+                animate_eloise();
+            }
+        }
     }
 }
 
@@ -271,20 +275,25 @@ static void print_logo_narrow(void) {
 	current_wpm = get_current_wpm();
 	max_wpm = max_wpm >= current_wpm?max_wpm:current_wpm;
 	
-    /* wpm counter */
-	oled_set_cursor(0, 11);
-	oled_write(get_u8_str(current_wpm, '0'), false);	
+	/* reset stats if oled is off */
+	if(!is_oled_on()) {
+		max_wpm = 0;
+	} else {	
+		/* wpm counter */
+		oled_set_cursor(0, 11);
+		oled_write(get_u8_str(current_wpm, '0'), false);	
 
-    oled_set_cursor(0, 12);
-    oled_write("wpm", false);
+		oled_set_cursor(0, 12);
+		oled_write("wpm", false);
 
-	
-	/* max WPM */
-	oled_set_cursor(2, 14);
-	oled_write(get_u8_str(max_wpm, '0'), false);
+		
+		/* max WPM */
+		oled_set_cursor(2, 14);
+		oled_write(get_u8_str(max_wpm, '0'), false);
 
-    oled_set_cursor(2, 15);
-	oled_write("max", false);
+		oled_set_cursor(2, 15);
+		oled_write("max", false);
+	}
 }
 
 static void print_status_narrow(void) {
@@ -348,7 +357,7 @@ static void print_status_narrow(void) {
 
     /* KEYBOARD PET RENDER START */
 
-    render_rose(0, 13);
+    render_eloise(0, 13);
 
     /* KEYBOARD PET RENDER END */
 }
